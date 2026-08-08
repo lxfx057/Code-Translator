@@ -1,0 +1,55 @@
+
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Offline Code Translator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Offline Code Translator</h1>
+
+        <div class="selectors">
+            <div>
+                <label for="sourceLang">Origin language:</label>
+                <select id="sourceLang">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="c">C/C++</option>
+                    <option value="java">Java</option>
+                    <option value="go">Go</option>
+                    <option value="sql">SQL</option>
+                </select>
+            </div>
+            <div>
+                <label for="targetLang">Destination language:</label>
+                <select id="targetLang">
+                    <option value="python">Python</option>
+                    <option value="javascript">JavaScript</option>
+                    <option value="c">C/C++</option>
+                    <option value="java">Java</option>
+                    <option value="go">Go</option>
+                    <option value="sql">SQL</option>
+                </select>
+            </div>
+            <div class="translate-wrapper">
+                <label style="visibility:hidden;">Traduci</label>
+                <button id="translateBtn">Translate</button>
+            </div>
+        </div>
+
+        <div class="editor-container">
+            <textarea id="inputCode" placeholder="Scrivi il codice qui..."></textarea>
+            <textarea id="outputCode" placeholder="Codice tradotto apparirà qui..." readonly></textarea>
+        </div>
+
+        <div id="statusBar"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
+
+    

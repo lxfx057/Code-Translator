@@ -1,0 +1,143 @@
+
+/* Stile generale */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #1e1e2f;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    color: #ddd;
+}
+
+/* Container principale */
+.container {
+    background: rgba(30, 30, 50, 0.8);
+    backdrop-filter: blur(10px);
+    padding: 20px;
+    border-radius: 15px;
+    width: 90%;
+    max-width: 900px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Titolo */
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #f0f0f0;
+}
+
+/* Selettori lingua e pulsante traduzione */
+.selectors {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    gap: 10px;
+}
+
+.selectors div {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+/* Select e button uniformi */
+select, button {
+    height: 36px;
+    font-size: 14px;
+    padding: 0 10px;
+    background: rgba(50, 50, 70, 0.8);
+    color: #eee;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 8px;
+    appearance: none;
+    box-sizing: border-box;
+}
+
+/* Pulsante traduzione */
+button {
+    width: 100%;
+    border: none;
+    background: #4a4aff;
+    color: #fff;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+/* Hover e click */
+button:hover {
+    background: #6a6aff;
+}
+
+button:active {
+    transform: scale(0.97);
+    box-shadow: 0 0 8px rgba(74, 74, 255, 0.6) inset;
+}
+
+/* Editor container */
+.editor-container {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+/* Textarea */
+textarea {
+    width: 50%;
+    height: 300px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,255,255,0.1);
+    background: rgba(40, 40, 60, 0.6);
+    color: #ddd;
+    font-family: monospace;
+    font-size: 14px;
+    resize: vertical;
+    backdrop-filter: blur(5px);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Focus su textarea */
+textarea:focus {
+    border: 1px solid #7aa7ff;
+    box-shadow: 0 0 10px rgba(122, 167, 255, 0.5);
+    outline: none;
+}
+
+/* Barra di stato */
+#statusBar {
+    text-align: center;
+    margin-top: 12px;
+    font-size: 14px;
+    color: #aab;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
+
+/* Responsive layout per schermi piccoli */
+@media (max-width: 600px) {
+.editor-container {
+        flex-direction: column;
+}
+
+    textarea {
+        width: 100%;
+        height: 200px;
+}
+
+.selectors {
+        flex-direction: column;
+}
+
+.selectors div {
+        width: 100%;
+}
+
+    button {
+        margin-top: 10px;
+}
+}
