@@ -10,6 +10,11 @@ body {
     background-color: #0b1329;
     color: #e2e8f0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-sizing: border-box;
+}
+
+*, *:before, *:after {
+    box-sizing: inherit;
 }
 
 /* ==========================================
@@ -30,7 +35,7 @@ body {
    TITOLO
    ========================================== */
 h1 {
-    margin-bottom: 24px;
+    margin: 0 0 24px 0;
     color: #f8fafc;
     font-size: 1.6rem;
     font-weight: 600;
@@ -47,6 +52,7 @@ h1 {
     align-items: flex-end;
     gap: 12px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 .selectors div {
@@ -54,11 +60,12 @@ h1 {
     flex-direction: column;
     flex: 1;
     gap: 6px;
+    min-width: 0;
 }
 
 select, 
 button {
-    box-sizing: border-box;
+    width: 100%;
     height: 42px;
     padding: 0 14px;
     background: rgba(30, 41, 59, 0.95);
@@ -80,7 +87,6 @@ select:focus {
 }
 
 button {
-    width: 100%;
     background: #2563eb;
     border: none;
     font-weight: 600;
@@ -105,6 +111,7 @@ button:active {
     display: flex;
     gap: 12px;
     margin-bottom: 20px;
+    width: 100%;
 }
 
 textarea {
@@ -156,6 +163,7 @@ textarea:focus {
 
     .selectors {
         flex-direction: column;
+        align-items: stretch;
     }
 
     .selectors div {
@@ -163,6 +171,6 @@ textarea:focus {
     }
 
     button {
-        margin-top: 6px;
+        margin-top: 0;
     }
 }
