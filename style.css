@@ -11,6 +11,7 @@ body {
     color: #e2e8f0;
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     box-sizing: border-box;
+    padding: 16px;
 }
 
 *, *:before, *:after {
@@ -21,23 +22,25 @@ body {
    CONTAINER PRINCIPALE
    ========================================== */
 .container {
-    width: 90%;
-    max-width: 900px;
-    padding: 24px;
-    background: rgba(15, 23, 42, 0.9);
+    width: 100%;
+    max-width: 850px;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.95);
     backdrop-filter: blur(12px);
     border: 1px solid rgba(56, 189, 248, 0.2);
     border-radius: 16px;
     box-shadow: 0 16px 35px rgba(0, 0, 0, 0.65);
+    display: flex;
+    flex-direction: column;
 }
 
 /* ==========================================
    TITOLO
    ========================================== */
 h1 {
-    margin: 0 0 24px 0;
+    margin: 0 0 16px 0;
     color: #f8fafc;
-    font-size: 1.6rem;
+    font-size: 1.4rem;
     font-weight: 600;
     text-align: center;
     letter-spacing: 0.5px;
@@ -50,8 +53,8 @@ h1 {
     display: flex;
     justify-content: space-between;
     align-items: flex-end;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 16px;
     width: 100%;
 }
 
@@ -59,20 +62,26 @@ h1 {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 6px;
+    gap: 4px;
     min-width: 0;
+}
+
+label, .selectors span {
+    font-size: 12px;
+    font-weight: 500;
+    color: #94a3b8;
 }
 
 select, 
 button {
     width: 100%;
-    height: 42px;
-    padding: 0 14px;
+    height: 38px;
+    padding: 0 12px;
     background: rgba(30, 41, 59, 0.95);
     border: 1px solid rgba(148, 163, 184, 0.25);
-    border-radius: 10px;
+    border-radius: 8px;
     color: #f1f5f9;
-    font-size: 14px;
+    font-size: 13px;
     outline: none;
     transition: all 0.2s ease-in-out;
 }
@@ -92,12 +101,12 @@ button {
     font-weight: 600;
     color: #ffffff;
     cursor: pointer;
-    transition: background 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+    margin-bottom: 16px;
+    transition: background 0.2s ease, transform 0.1s ease;
 }
 
 button:hover {
     background: #1d4ed8;
-    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
 }
 
 button:active {
@@ -109,22 +118,22 @@ button:active {
    ========================================== */
 .editor-container {
     display: flex;
-    gap: 12px;
-    margin-bottom: 20px;
+    gap: 10px;
+    margin-bottom: 10px;
     width: 100%;
 }
 
 textarea {
     width: 50%;
-    height: 300px;
-    padding: 14px;
+    height: 160px;
+    padding: 12px;
     background: rgba(15, 23, 42, 0.7);
     backdrop-filter: blur(6px);
     border: 1px solid rgba(148, 163, 184, 0.25);
-    border-radius: 12px;
+    border-radius: 10px;
     color: #f1f5f9;
     font-family: 'Fira Code', monospace, sans-serif;
-    font-size: 14px;
+    font-size: 13px;
     resize: vertical;
     transition: all 0.2s ease-in-out;
 }
@@ -140,25 +149,34 @@ textarea:focus {
    BARRA DI STATO
    ========================================== */
 #statusBar {
-    margin-top: 12px;
+    margin-top: 8px;
     color: #94a3b8;
-    font-size: 13px;
+    font-size: 12px;
     text-align: center;
     opacity: 0;
     transition: opacity 0.3s ease;
 }
 
 /* ==========================================
-   RESPONSIVE LAYOUT
+   RESPONSIVE LAYOUT (MOBILE)
    ========================================== */
 @media (max-width: 600px) {
+    body {
+        align-items: flex-start;
+        padding: 10px;
+    }
+
+    .container {
+        padding: 14px;
+    }
+
     .editor-container {
         flex-direction: column;
     }
 
     textarea {
         width: 100%;
-        height: 200px;
+        height: 130px;
     }
 
     .selectors {
@@ -168,9 +186,5 @@ textarea:focus {
 
     .selectors div {
         width: 100%;
-    }
-
-    button {
-        margin-top: 0;
     }
 }
