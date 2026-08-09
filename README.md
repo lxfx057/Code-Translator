@@ -2,7 +2,7 @@
 
 ## Description 📔
 
-**Offline Code Translator Pro** is an advanced web app that allows you to **translate code between 10+ programming languages** entirely **offline**.  
+**Offline Code Translator** is an advanced web app that allows you to **translate code between 10+ programming languages** entirely **offline**.  
 The system uses a **hybrid semantic + deterministic rule engine**, with **automatic language detection** and support for local **AST parsers**.
 
 ### 🔤 Supported Languages
