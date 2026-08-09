@@ -1,181 +1,225 @@
-# 🧠 Offline Code Translator Pro
+# 🧠 Offline Code Translator
 
-## Description 📔
+Translate code between 10+ programming languages **entirely offline**, using a hybrid engine (AST + deterministic rules) and a modern interface.
 
-**Offline Code Translator** is an advanced web app that allows you to **translate code between 10+ programming languages** entirely **offline**.  
-The system uses a **hybrid semantic + deterministic rule engine**, with **automatic language detection** and support for local **AST parsers**.
+---
 
-### 🔤 Supported Languages
+## 📔 Description
+
+**Offline Code Translator** is a client-side web app that lets you translate code snippets between multiple languages without a server or internet connection.
+
+- **Bidirectional translation** between all supported language pairs  
+- **Automatic detection** of the source language  
+- **Hybrid engine**:  
+  - AST-based semantic analysis  
+  - Deterministic rules with regex-based fallback  
+- All parsers and libraries are loaded **locally** and work **100% offline**
+
+---
+
+## 🔤 Supported Languages
 
 - Python  
 - JavaScript / TypeScript  
 - C / C++  
 - Java  
 - Go  
-- SQL (on working)
+- SQL (in progress)
 
 ---
 
 ## 🧩 Key Features
 
-- 🔁 **Bidirectional translation** — any language can be translated to any other.  
-- 🧠 **Automatic language detection** — the source language is detected in real-time.  
-- 🧬 **Semantic translation (AST-based)** — interprets the logical structure of the code.  
-- ⚙️ **Offline parsing** via local libraries such as `luaparse`, `acorn`, `tree-sitter`, `uniter`, etc.  
-- 💡 **Fallback regex translator** for simple conversions (print, loops, functions).  
-- 🎨 **Modern UI** — dark mode, blur effects, padding, hover/click animations, and colored warnings if translation fails.  
-- 🧭 **Real-time translation (optional)** — continuously translates while typing.
+- 🔁 **Bidirectional translation**: any supported language → any other supported language  
+- 🧠 **Automatic source language detection** in real time  
+- 🧬 **AST-based semantic translation**: interprets the logical structure of the code  
+- ⚙️ **Offline parsing** using local libraries (e.g. `acorn`, `tree-sitter`, `luaparse`, `uniter`, etc.)  
+- 💡 **Regex fallback** for simple conversions (print statements, loops, functions, etc.)  
+- 🎨 **Modern UI**:  
+  - dark mode  
+  - blur effects (`backdrop-filter`)  
+  - uniform padding (10px)  
+  - rounded borders and soft shadows  
+  - hover/click animations on buttons and editors  
+- 🧭 **Real-time translation** (optional) while typing
 
 ---
 
-## 🧱 Technologies Used
+## 🧱 Technologies and Parsers
 
-| Language | Offline Library / Parser |
-|----------|-------------------------|
-| **Python** | Skulpt / Transcrypt |
-| **JavaScript** | Acorn.js |
-| **C / C++** | Emscripten / Clang WASM |
-| **Java** | CheerpJ |
-| **Go** | GopherJS |
-| **SQL** | node-sql-parser |
+| Language         | Offline Library / Parser           |
+|------------------|------------------------------------|
+| **Python**       | Skulpt / Transcrypt                |
+| **JavaScript**   | Acorn.js                           |
+| **C / C++**      | Emscripten / Clang WASM            |
+| **Java**         | CheerpJ                            |
+| **Go**           | GopherJS                           |
+| **SQL**          | node-sql-parser                    |
 
-All libraries are loaded **locally** and work **completely offline**.
+All libraries are bundled locally and loaded by the browser, with no external requests.
 
 ---
 
 ## ⚡ Installation
 
 1. Clone the repository:
-```
-git clone https://github.com/your-username/Offline-Code-Translator.git
-```
-Open index.html in your browser.
+   ```bash
+   git clone https://github.com/your-username/Offline-Code-Translator.git
+   ```
+2. Open `index.html` directly in your browser.
 
-💡 No local server required — the app works entirely offline.
+> 💡 No local server is required: the app works entirely offline.
 
-🧪 Usage
-Select the source and target language.
+---
 
-Write or paste code into the left editor.
+## 🧪 Usage
 
-Press Translate (or enable real-time auto-translation).
+1. Select:
+   - **Source language** (or leave “Auto-detect”)
+   - **Target language**
+2. Write or paste your code in the left editor.
+3. Press **Translate** or enable **real-time translation**.
+4. The translated code appears in the right editor.
 
-The translated code will appear in the right editor.
+If no valid translation rules exist for the selected combination, a red warning is shown:
 
-If no valid rules apply, a red warning will appear:
+> ⚠️ No valid translation rules found
 
-⚠️ No valid translation rules found
+---
 
-💻 Example
+## 💻 Examples
 
-Python → JavaScript
+### Python → JavaScript
 
-```
+**Python:**
+```python
 for i in range(3):
     print("Hello", i)
 ```
-Translated to JavaScript:
 
-```
+**JavaScript:**
+```js
 for(let i=0; i<3; i++){
     console.log("Hello", i);
 }
 ```
-Translated to C:
+
+### Python → C
+
+**Python:**
+```python
+for i in range(3):
+    print("Hello", i)
 ```
-for(int i=0;i<3;i++){
-    printf("%s\n","Hello", i);
+
+**C:**
+```c
+for(int i=0; i<3; i++){
+    printf("%s %d\n", "Hello", i);
 }
 ```
-Translated to GO
+
+### Python → Go
+
+**Python:**
+```python
+for i in range(3):
+    print("Hello", i)
 ```
-for i:=0;i<3;i++ {
+
+**Go:**
+```go
+for i := 0; i < 3; i++ {
     fmt.Println("Hello", i)
 }
 ```
-Bidirectional example:
 
-Python
+### Bidirectional translation
 
-```
+Python → JavaScript → Python:
+
+```python
+# Python
 for i in range(3):
     print("Hello", i)
 ```
-→ JavaScript
 
-```
-
+```js
+// JavaScript
 for(let i=0; i<3; i++){
     console.log("Hello", i);
 }
 ```
-→ Back to Python
 
-```
+```python
+# Python (again)
 for i in range(3):
     print("Hello", i)
 ```
 
-🎨 Styling
-Dark mode with soft colors.
+---
 
-Blur effect on containers and textareas (backdrop-filter).
+## 🎨 Styling and UI
 
-10px uniform padding.
+- Dark mode with soft colors  
+- Blur effect on containers and textareas (`backdrop-filter`)  
+- Uniform 10px padding  
+- Rounded borders and light shadows  
+- Hover and click effects on buttons and text areas  
 
-Rounded borders and soft shadows.
+---
 
-Hover and click effects on buttons and textareas.
+## 👥 Contributing
 
-👥 Contributing
-Thank you for your interest in contributing to Offline Code Translator Pro! 💻🎉
+Thanks for your interest in contributing to **Offline Code Translator**! 💻🎉  
+Ideas, bug fixes, and improvements are welcome.
 
-Your ideas, bug fixes, and improvements are very welcome. Follow these steps:
+### How to contribute
 
-Fork the repository
-Click Fork at the top-right of GitHub.
-Clone your fork locally:
+1. **Fork the repository**  
+   Use the **Fork** button at the top-right on GitHub.
 
-git clone ```https://github.com/your-username/Offline-Code-Translator.git```
+2. **Clone your fork locally**
+   ```bash
+   git clone https://github.com/your-username/Offline-Code-Translator.git
+   ```
 
-Create a branch
+3. **Create a branch**
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+   Use clear branch names, for example:
+   - `feature/add-python-go-translation`
+   - `bugfix/fix-language-detection`
 
-git checkout -b feature/your-feature-name
-Make changes
+4. **Make your changes**
+   - Add new translation rules between languages  
+   - Improve HTML/CSS/JS (interface, effects, dark mode, blur, etc.)  
+   - Update documentation or the README  
+   - Keep your code clean and well-commented  
 
-Add new translation rules between languages.
+5. **Test your changes**
+   - Open `index.html` in your browser  
+   - Verify that new features/rules work offline  
+   - Ensure all supported language combinations still function correctly  
 
-Improve HTML/CSS/JS interface, effects, dark mode, blur, etc.
+6. **Commit and push**
+   ```bash
+   git add .
+   git commit -m "Describe your changes"
+   git push origin feature/your-feature-name
+   ```
 
-Update documentation or README.
+7. **Open a Pull Request (PR)**
+   - Go to the original repository on GitHub  
+   - Open a PR from your branch to the `main` branch  
+   - Provide a clear description and, if helpful, screenshots or examples  
 
-Keep your code clean and well-commented.
+---
 
-Test your changes
+## 📃 Contribution Guidelines
 
-Open index.html to make sure new features or rules work offline.
-
-Ensure all supported language combinations still function correctly.
-
-Commit and push
-```
-git add .
-git commit -m "Describe your changes"
-git push origin feature/your-feature-name
-Open a Pull Request (PR)
-```
-
-Go to the original repository on GitHub.
-
-Open a PR from your branch to the main branch.
-
-Provide a detailed description and screenshots/examples if needed.
-
-# 📃 Contribution Guidelines
-- Keep your code readable and consistent with project style.
-
-- Do not remove existing functionality without valid reason.
-
-- Test all new features across all supported languages.
-
-- Use clear naming for branches (feature/feature-name, bugfix/bug-name).
+- Keep your code readable and consistent with the project style.  
+- Do not remove existing functionality without a good reason.  
+- Test all new features across all supported languages.  
+- Use clear branch names (`feature/feature-name`, `bugfix/bug-name`).  
