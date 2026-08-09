@@ -171,11 +171,11 @@ Open a PR from your branch to the main branch.
 
 Provide a detailed description and screenshots/examples if needed.
 
-📃 Contribution Guidelines
-Keep your code readable and consistent with project style.
+# 📃 Contribution Guidelines
+- Keep your code readable and consistent with project style.
 
-Do not remove existing functionality without valid reason.
+- Do not remove existing functionality without valid reason.
 
-Test all new features across all supported languages.
+- Test all new features across all supported languages.
 
-Use clear naming for branches (feature/feature-name, bugfix/bug-name).
+- Use clear naming for branches (feature/feature-name, bugfix/bug-name).
