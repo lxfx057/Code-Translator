@@ -37,6 +37,7 @@
             <div class="translate-wrapper">
                 <label style="visibility:hidden;">Traduci</label>
                 <button id="translateBtn">Translate</button>
+                <button id="swapBtn" type="button">Swap languages</button>
             </div>
         </div>
 
@@ -45,7 +46,9 @@
             <textarea id="outputCode" placeholder="Codice tradotto apparirà qui..." readonly></textarea>
         </div>
 
-        <div id="statusBar"></div>
+        <div class="output-actions"><button id="copyBtn" type="button">Copy result</button><button id="downloadBtn" type="button">Download .txt</button></div>
+        <p class="notice">Experimental rule-based converter: it handles only supported patterns and does not preserve every language feature. Review and test generated code before using it.</p>
+        <div id="statusBar" role="status" aria-live="polite"></div>
     </div>
 
     <script src="script.js"></script>
