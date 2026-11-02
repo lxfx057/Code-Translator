@@ -138,10 +138,68 @@ function translateCode(code, source, target) {
     return translated;
 }
 
+const statusBar = document.getElementById("statusBar");
+const swapBtn = document.getElementById("swapBtn");
+const copyBtn = document.getElementById("copyBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+
 translateBtn.addEventListener("click", () => {
     const code = inputCode.value;
+    if (!code.trim()) {
+        outputCode.value = "";
+        statusBar.textContent = "Inserisci prima del codice da convertire.";
+        return;
+    }
+    if (code.length > 100000) {
+        statusBar.textContent = "Il codice supera il limite di 100.000 caratteri.";
+        return;
+    }
     const source = sourceLang.value;
     const target = targetLang.value;
     const translated = translateCode(code, source, target);
     outputCode.value = translated;
+    statusBar.textContent = translated === "No valid result"
+        ? "Conversione non disponibile per questa combinazione o per la sintassi inserita."
+        : source === target
+            ? "Le lingue selezionate coincidono: codice copiato senza modifiche."
+            : "Conversione euristica completata. Controlla e testa il risultato prima di usarlo.";
+});
+
+swapBtn?.addEventListener("click", () => {
+    const current = sourceLang.value;
+    sourceLang.value = targetLang.value;
+    targetLang.value = current;
+    statusBar.textContent = "Linguaggi invertiti.";
+});
+
+copyBtn?.addEventListener("click", async () => {
+    if (!outputCode.value.trim()) {
+        statusBar.textContent = "Non c'è alcun risultato da copiare.";
+        return;
+    }
+    try {
+        await navigator.clipboard.writeText(outputCode.value);
+        statusBar.textContent = "Risultato copiato negli appunti.";
+    } catch {
+        outputCode.focus();
+        outputCode.select();
+        statusBar.textContent = "Copia automatica non disponibile: seleziona il testo e copialo manualmente.";
+    }
+});
+
+downloadBtn?.addEventListener("click", () => {
+    if (!outputCode.value.trim()) {
+        statusBar.textContent = "Non c'è alcun risultato da scaricare.";
+        return;
+    }
+    const blob = new Blob([outputCode.value], { type: "text/plain;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "converted-code.txt";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    statusBar.textContent = "File di testo generato.";
 });
