@@ -1,8 +1,8 @@
 {
   "name": "offline-code-translator",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "private": true,
-  "description": "Conservative offline code conversion and language detection",
+  "description": "Offline code conversion with structured Python and JavaScript AST parsing",
   "scripts": {
     "test": "node --test"
   }
