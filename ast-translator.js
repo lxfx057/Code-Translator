@@ -29,12 +29,14 @@
       if (text.startsWith("#")) node = { type: "comment", value: text.slice(1).trim() };
       else if ((m = text.match(/^if\s+(.+):$/))) node = { type: "if", test: m[1], body: [] };
       else if ((m = text.match(/^elif\s+(.+):$/))) {
-        const previous = parent[parent.length - 1];
+        let previous = parent[parent.length - 1];
+        while (previous && previous.alternate && previous.alternate.length === 1 && previous.alternate[0].type === "if") previous = previous.alternate[0];
         if (!previous || previous.type !== "if") throw new Error("elif senza if corrispondente alla riga " + (i + 1));
-        node = { type: "if", test: m[1], body: [] };
+        node = { type: "if", test: m[1], body: [], _attached: true };
         previous.alternate = [node];
       } else if (/^else\s*:$/.test(text)) {
-        const previous = parent[parent.length - 1];
+        let previous = parent[parent.length - 1];
+        while (previous && previous.alternate && previous.alternate.length === 1 && previous.alternate[0].type === "if") previous = previous.alternate[0];
         if (!previous || !["if", "while", "for", "function"].includes(previous.type)) throw new Error("else senza blocco corrispondente alla riga " + (i + 1));
         previous.alternate = [];
         node = { type: "alternate-container", body: previous.alternate };
@@ -50,7 +52,7 @@
       if (node.type === "alternate-container") {
         stack.push({ indent, body: node.body, node });
       } else {
-        parent.push(node);
+        if (!node._attached) parent.push(node);
         if (node.body) stack.push({ indent, body: node.body, node });
       }
     }
