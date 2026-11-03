@@ -89,13 +89,18 @@
       if (!trimmed) { out.push(""); continue; }
       const indent = raw.match(/^\s*/)[0].replace(/\t/g, "    ").length;
       const level = Math.floor(indent / 4);
-      closeTo(level);
       const pad = "    ".repeat(level);
+      if (/^(elif\s+.+|else)\s*:$/.test(trimmed)) {
+        if (stack.length) stack.pop();
+        const condition = trimmed.match(/^elif\s+(.+):$/);
+        out.push(pad + (condition ? "} else if (" + convertLiterals(condition[1], target) + ") {" : "} else {"));
+        stack.push(level);
+        continue;
+      }
+      closeTo(level);
       if (trimmed.startsWith("#")) { out.push(pad + (target === "python" ? trimmed : "//" + trimmed.slice(1))); continue; }
       let m;
       if ((m = trimmed.match(/^if\s+(.+):$/))) { out.push(pad + "if (" + convertLiterals(m[1], target) + ") {"); stack.push(level); continue; }
-      if ((m = trimmed.match(/^elif\s+(.+):$/))) { out.push(pad + "} else if (" + convertLiterals(m[1], target) + ") {"); stack.push(level); continue; }
-      if (/^else\s*:$/.test(trimmed)) { out.push(pad + "} else {"); stack.push(level); continue; }
       if ((m = trimmed.match(/^while\s+(.+):$/))) { out.push(pad + "while (" + convertLiterals(m[1], target) + ") {"); stack.push(level); continue; }
       if ((m = trimmed.match(/^for\s+(\w+)\s+in\s+range\(\s*(?:(\d+)\s*,\s*)?(\d+)\s*\):$/))) {
         const start = m[2] || "0", end = m[3], v = m[1];
