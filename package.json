@@ -1,0 +1,9 @@
+{
+  "name": "offline-code-translator",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Conservative offline code conversion and language detection",
+  "scripts": {
+    "test": "node --test"
+  }
+}
