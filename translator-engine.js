@@ -139,8 +139,46 @@
     return out.join("\n");
   }
 
+  function translateJavaScriptToPython(code, warnings) {
+    const lines = code.replace(/\r\n/g, "\n").split("\n");
+    const out = [];
+    let depth = 0;
+    lines.forEach((raw, index) => {
+      const line = raw.trim();
+      if (!line) { out.push(""); return; }
+      let m;
+      if ((m = line.match(/^}\s*else\s+if\s*\((.*)\)\s*{\s*$/))) {
+        depth = Math.max(0, depth - 1);
+        out.push("    ".repeat(depth) + "elif " + convertLiterals(m[1], "python") + ":");
+        depth++; return;
+      }
+      if (/^}\s*else\s*{\s*$/.test(line)) {
+        depth = Math.max(0, depth - 1);
+        out.push("    ".repeat(depth) + "else:");
+        depth++; return;
+      }
+      if (/^}\s*;?\s*$/.test(line)) { depth = Math.max(0, depth - 1); return; }
+      const pad = "    ".repeat(depth);
+      if ((m = line.match(/^if\s*\((.*)\)\s*{\s*$/))) { out.push(pad + "if " + convertLiterals(m[1], "python") + ":"); depth++; return; }
+      if ((m = line.match(/^while\s*\((.*)\)\s*{\s*$/))) { out.push(pad + "while " + convertLiterals(m[1], "python") + ":"); depth++; return; }
+      if ((m = line.match(/^for\s*\(\s*(?:let|var|const)\s+(\w+)\s*=\s*(\d+)\s*;\s*\1\s*<\s*(\d+)\s*;\s*\1\+\+\s*\)\s*{\s*$/))) {
+        out.push(pad + "for " + m[1] + " in range(" + m[2] + ", " + m[3] + "):"); depth++; return;
+      }
+      if (line.startsWith("//")) { out.push(pad + "#" + line.slice(2)); return; }
+      if ((m = line.match(/^console\.log\s*\((.*)\)\s*;?$/))) { out.push(pad + "print(" + m[1] + ")"); return; }
+      if ((m = line.match(/^(?:const|let|var)\s+([A-Za-z_]\w*)\s*=\s*(.*);?$/))) { out.push(pad + m[1] + " = " + convertLiterals(m[2].replace(/;\s*$/, ""), "python")); return; }
+      if ((m = line.match(/^return(?:\s+(.*))?;?$/))) { out.push(pad + "return" + (m[1] ? " " + m[1].replace(/;\s*$/, "") : "")); return; }
+      if (/^[A-Za-z_]\w*\s*=/.test(line)) { out.push(pad + convertLiterals(line.replace(/;\s*$/, ""), "python")); return; }
+      warnings.push("Riga " + (index + 1) + ": istruzione JavaScript non convertita; mantenuta come commento.");
+      out.push(pad + "# REVIEW: " + line);
+    });
+    if (depth !== 0) warnings.push("Le parentesi graffe non risultano bilanciate; controlla la struttura dei blocchi.");
+    return out.join("\n");
+  }
+
   function translateSimple(code, source, target, warnings) {
     if (source === "python") return translatePython(code, target, warnings);
+    if (source === "javascript" && target === "python") return translateJavaScriptToPython(code, warnings);
     const lines = code.replace(/\r\n/g, "\n").split("\n");
     const out = lines.map((raw, index) => {
       const trimmed = raw.trim();
