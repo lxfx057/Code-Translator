@@ -30,3 +30,25 @@ test("rejects empty input", () => {
   assert.equal(result.code, "");
   assert.ok(result.errors.length);
 });
+
+test("AST parser translates Python conditionals and boolean operators", () => {
+  const result = engine.translate('ready = True\nif ready and count > 2:\n    print("ok")\nelse:\n    print("wait")', "python", "javascript");
+  assert.equal(result.parser, "python-ast");
+  assert.match(result.code, /if \(ready && count > 2\)/);
+  assert.match(result.code, /} else \{/);
+  assert.match(result.code, /console\.log\("wait"\);/);
+});
+
+test("AST parser translates JavaScript functions and loops", () => {
+  const result = engine.translate('function greet(name) {\n  console.log(name);\n}\nfor (let i = 0; i < 3; i++) {\n  greet(i);\n}', "javascript", "python");
+  assert.equal(result.parser, "javascript-ast");
+  assert.match(result.code, /def greet\(name\):/);
+  assert.match(result.code, /for i in range\(0, 3\):/);
+});
+
+test("AST parser refuses unsupported syntax instead of returning a misleading partial conversion", () => {
+  const result = engine.translate('const fn = (x) => x + 1;', "javascript", "python");
+  assert.equal(result.code, "");
+  assert.equal(result.confidence, 0);
+  assert.match(result.warnings.join(" "), /non supportato/);
+});
