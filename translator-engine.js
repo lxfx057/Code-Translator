@@ -22,7 +22,7 @@
     }
     if (/^\s*for\s+\w+\s+in\s+range\s*\(/m.test(text)) scores.python += 5;
     if (/^\s*(if|while|for)\s*\(.*\)\s*\{/m.test(text)) scores.javascript += 2;
-    if /^\s*def\s+\w+\s*\(/m.test(text) scores.python += 5;
+    if (/^\s*def\s+\w+\s*\(/m.test(text)) scores.python += 5;
     if (/^\s*func\s+\w+\s*\(/m.test(text)) scores.go += 5;
     if (/^\s*package\s+\w+/m.test(text)) scores.go += 4;
     if (/^\s*#include/m.test(text)) scores.c += 5;
