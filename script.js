@@ -1,205 +1,136 @@
-const inputCode = document.getElementById("inputCode");
-const outputCode = document.getElementById("outputCode");
-const sourceLang = document.getElementById("sourceLang");
-const targetLang = document.getElementById("targetLang");
-const translateBtn = document.getElementById("translateBtn");
+(() => {
+  "use strict";
+  const $ = id => document.getElementById(id);
+  const input = $("inputCode"), output = $("outputCode");
+  const source = $("sourceLang"), target = $("targetLang");
+  const status = $("statusBar"), warnings = $("warningList");
+  const count = $("inputCount"), outputCount = $("outputCount");
+  const state = $("resultState");
+  let lastResult = null;
 
-function highlightError() {
-    outputCode.style.backgroundColor = '#ff4d4d'; // rosso
-    setTimeout(() => {
-        outputCode.style.backgroundColor = 'rgba(40, 40, 60, 0.6)'; // colore normale
-    }, 1200);
-}
+  const examples = {
+    python: 'name = "Luca"\nfor i in range(3):\n    print("Hello", name, i)',
+    javascript: 'const name = "Luca";\nfor (let i = 0; i < 3; i++) {\n  console.log("Hello", name, i);\n}',
+    go: 'package main\n\nimport "fmt"\n\nfunc main() {\n    fmt.Println("Hello, world")\n}'
+  };
 
-/**
- * Traduzione deterministica tra Python, JS, C, Java, Go, SQL
- */
-function translateCode(code, source, target) {
-    if (source === target) return code;
-    let translated = code;
-    let mappingExists = true;
-
-    // --- Python as source ---
-    if (source === "python") {
-        if (target === "javascript") {
-            translated = translated
-                .replace(/print\((.*)\)/g, 'console.log($1)')
-                .replace(/for (.+) in range\((.+)\):/g, 'for(let $1=0; $1<$2; $1++){')
-                .replace(/:$/g, '{')
-                .replace(/^\s+$/gm, '}');
-        } else if (target === "c") {
-            translated = translated
-                .replace(/print\((.*)\)/g, 'printf("%s\\n",$1);')
-                .replace(/for (.+) in range\((.+)\):/g, 'for(int $1=0;$1<$2;$1++){')
-                .replace(/:$/g, '{')
-                .replace(/^\s+$/gm, '}');
-        } else if (target === "java") {
-            translated = translated
-                .replace(/print\((.*)\)/g, 'System.out.println($1);')
-                .replace(/for (.+) in range\((.+)\):/g, 'for(int $1=0;$1<$2;$1++){')
-                .replace(/:$/g, '{')
-                .replace(/^\s+$/gm, '}');
-        } else if (target === "go") {
-            translated = translated
-                .replace(/print\((.*)\)/g, 'fmt.Println($1)')
-                .replace(/for (.+) in range\((.+)\):/g, 'for $1:=0;$1<$2;$1++ {')
-                .replace(/:$/g, '{')
-                .replace(/^\s+$/gm, '}');
-        } else if (target === "sql") {
-            translated = '/* Python → SQL mapping not available */';
-        } else mappingExists = false;
+  function setStatus(message, list = []) {
+    status.textContent = message;
+    warnings.replaceChildren();
+    list.forEach(message => {
+      const li = document.createElement("li");
+      li.textContent = message;
+      warnings.appendChild(li);
+    });
+  }
+  function updateCounts() {
+    count.textContent = input.value.length.toLocaleString() + " characters";
+    outputCount.textContent = output.value.length.toLocaleString() + " characters";
+    $("inputLanguageLabel").textContent = source.value === "auto" ? "AUTO DETECT" : source.value.toUpperCase();
+    $("outputLanguageLabel").textContent = target.value.toUpperCase();
+  }
+  function translate() {
+    updateCounts();
+    if (!input.value.trim()) {
+      output.value = "";
+      lastResult = null;
+      state.textContent = "WAITING FOR INPUT";
+      setStatus("Inserisci codice sorgente prima di avviare la conversione.");
+      updateCounts();
+      return;
     }
-
-    // --- JavaScript as source ---
-    else if (source === "javascript") {
-        if (target === "python") {
-            translated = translated
-                .replace(/console\.log\((.*)\)/g, 'print($1)')
-                .replace(/for\s*\(\s*let\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for $1 in range($2):')
-                .replace(/{/g, '')
-                .replace(/}/g, '');
-        } else if (target === "c") {
-            translated = translated
-                .replace(/console\.log\((.*)\)/g, 'printf("%s\\n",$1);')
-                .replace(/for\s*\(\s*let\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for(int $1=0;$1<$2;$1++){');
-        } else if (target === "java") {
-            translated = translated
-                .replace(/console\.log\((.*)\)/g, 'System.out.println($1);')
-                .replace(/for\s*\(\s*let\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for(int $1=0;$1<$2;$1++){');
-        } else if (target === "go") {
-            translated = translated
-                .replace(/console\.log\((.*)\)/g, 'fmt.Println($1)')
-                .replace(/for\s*\(\s*let\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for $1:=0;$1<$2;$1++ {');
-        } else if (target === "sql") {
-            translated = '/* JavaScript → SQL mapping not available */';
-        } else mappingExists = false;
+    if (input.value.length > 100000) {
+      output.value = "";
+      lastResult = null;
+      state.textContent = "INPUT TOO LARGE";
+      setStatus("Il limite è di 100.000 caratteri. Riduci il codice e riprova.");
+      updateCounts();
+      return;
     }
-
-    // --- C as source ---
-    else if (source === "c") {
-        if (target === "python") {
-            translated = translated
-                .replace(/printf\("%s\\n",(.*)\);/g, 'print($1)')
-                .replace(/for\s*\(int\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for $1 in range($2):')
-                .replace(/{/g, '')
-                .replace(/}/g, '');
-        } else if (target === "javascript") {
-            translated = translated
-                .replace(/printf\("%s\\n",(.*)\);/g, 'console.log($1)')
-                .replace(/for\s*\(int\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for(let $1=0; $1<$2; $1++){')
-                .replace(/{/g, '')
-                .replace(/}/g, '');
-        } else if (target === "java") {
-            translated = translated
-                .replace(/printf\("%s\\n",(.*)\);/g, 'System.out.println($1)')
-                .replace(/for\s*\(int\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for(int $1=0;$1<$2;$1++){')
-                .replace(/{/g, '')
-                .replace(/}/g, '');
-        } else if (target === "go") {
-            translated = translated
-                .replace(/printf\("%s\\n",(.*)\);/g, 'fmt.Println($1)')
-                .replace(/for\s*\(int\s*(.+)=0;\s*\1<(.+);\s*\1\+\+\)/g, 'for $1:=0;$1<$2;$1++ {');
-        } else if (target === "sql") {
-            translated = '/* C → SQL mapping not available */';
-        } else mappingExists = false;
+    if (!window.CodeTranslator) {
+      setStatus("Errore: motore di traduzione non caricato. Ricarica la pagina.");
+      state.textContent = "ENGINE ERROR";
+      return;
     }
-
-    // --- Java as source ---
-    else if (source === "java") {
-        if (target === "python") translated = translated.replace(/System\.out\.println\((.*)\);/g, 'print($1)');
-        else if (target === "javascript") translated = translated.replace(/System\.out\.println\((.*)\);/g, 'console.log($1)');
-        else if (target === "c") translated = translated.replace(/System\.out\.println\((.*)\);/g, 'printf("%s\\n",$1);');
-        else if (target === "go") translated = translated.replace(/System\.out\.println\((.*)\);/g, 'fmt.Println($1)');
-        else if (target === "sql") translated = '/* Java → SQL mapping not available */';
-        else mappingExists = false;
+    const result = window.CodeTranslator.translate(input.value, source.value, target.value);
+    lastResult = result;
+    output.value = result.code || "";
+    const detected = result.source ? " Sorgente: " + result.source + "." : "";
+    if (result.errors.length) {
+      state.textContent = "CONVERSION ERROR";
+      setStatus(result.errors.join(" "), result.warnings);
+    } else if (!result.code) {
+      state.textContent = "NOT SUPPORTED";
+      setStatus("Nessuna conversione automatica affidabile disponibile." + detected, result.warnings);
+    } else {
+      state.textContent = result.warnings.length ? "REVIEW REQUIRED" : "CONVERTED";
+      setStatus("Elaborazione terminata." + detected + " Affidabilità indicativa: " + Math.round(result.confidence * 100) + "%. " + "Controlla sempre il codice generato.", result.warnings);
     }
+    updateCounts();
+  }
 
-    // --- Go as source ---
-    else if (source === "go") {
-        if (target === "python") translated = translated.replace(/fmt\.Println\((.*)\)/g, 'print($1)');
-        else if (target === "javascript") translated = translated.replace(/fmt\.Println\((.*)\)/g, 'console.log($1)');
-        else if (target === "c") translated = translated.replace(/fmt\.Println\((.*)\)/g, 'printf("%s\\n",$1);');
-        else if (target === "java") translated = translated.replace(/fmt\.Println\((.*)\)/g, 'System.out.println($1);');
-        else if (target === "sql") translated = '/* Go → SQL mapping not available */';
-        else mappingExists = false;
-    }
-
-    // --- SQL as source ---
-    else if (source === "sql") {
-        translated = '/* SQL → Other languages mapping not available */';
-        mappingExists = false;
-    }
-
-    if (!mappingExists || translated.includes('not available')) {
-        highlightError();
-        return 'No valid result';
-    }
-
-    return translated;
-}
-
-const statusBar = document.getElementById("statusBar");
-const swapBtn = document.getElementById("swapBtn");
-const copyBtn = document.getElementById("copyBtn");
-const downloadBtn = document.getElementById("downloadBtn");
-
-translateBtn.addEventListener("click", () => {
-    const code = inputCode.value;
-    if (!code.trim()) {
-        outputCode.value = "";
-        statusBar.textContent = "Inserisci prima del codice da convertire.";
+  $("translateBtn").addEventListener("click", translate);
+  $("swapBtn").addEventListener("click", () => {
+    if (source.value === "auto") {
+      const detected = window.CodeTranslator.detectLanguage(input.value);
+      if (!detected.language) {
+        setStatus("Non posso invertire i linguaggi: prima seleziona manualmente la sorgente o inserisci codice riconoscibile.");
         return;
+      }
+      source.value = target.value;
+      target.value = detected.language;
+    } else {
+      const old = source.value;
+      source.value = target.value;
+      target.value = old;
     }
-    if (code.length > 100000) {
-        statusBar.textContent = "Il codice supera il limite di 100.000 caratteri.";
-        return;
-    }
-    const source = sourceLang.value;
-    const target = targetLang.value;
-    const translated = translateCode(code, source, target);
-    outputCode.value = translated;
-    statusBar.textContent = translated === "No valid result"
-        ? "Conversione non disponibile per questa combinazione o per la sintassi inserita."
-        : source === target
-            ? "Le lingue selezionate coincidono: codice copiato senza modifiche."
-            : "Conversione euristica completata. Controlla e testa il risultato prima di usarlo.";
-});
-
-swapBtn?.addEventListener("click", () => {
-    const current = sourceLang.value;
-    sourceLang.value = targetLang.value;
-    targetLang.value = current;
-    statusBar.textContent = "Linguaggi invertiti.";
-});
-
-copyBtn?.addEventListener("click", async () => {
-    if (!outputCode.value.trim()) {
-        statusBar.textContent = "Non c'è alcun risultato da copiare.";
-        return;
-    }
+    updateCounts();
+    if (input.value.trim()) translate();
+    else setStatus("Linguaggi invertiti.");
+  });
+  $("clearBtn").addEventListener("click", () => {
+    input.value = ""; output.value = ""; lastResult = null;
+    state.textContent = "WAITING FOR INPUT";
+    setStatus("Editor pulito. Inserisci un nuovo frammento di codice.");
+    updateCounts(); input.focus();
+  });
+  $("sampleBtn").addEventListener("click", () => {
+    const lang = source.value === "auto" ? "python" : source.value;
+    input.value = examples[lang] || examples.python;
+    if (source.value === "auto") source.value = "python";
+    updateCounts(); translate();
+  });
+  $("copyBtn").addEventListener("click", async () => {
+    if (!output.value.trim()) { setStatus("Non c'è alcun risultato da copiare."); return; }
     try {
-        await navigator.clipboard.writeText(outputCode.value);
-        statusBar.textContent = "Risultato copiato negli appunti.";
+      if (navigator.clipboard && window.isSecureContext) await navigator.clipboard.writeText(output.value);
+      else {
+        output.focus(); output.select();
+        const copied = document.execCommand("copy");
+        if (!copied) throw new Error("Clipboard unavailable");
+      }
+      setStatus("Risultato copiato negli appunti.", lastResult?.warnings || []);
     } catch {
-        outputCode.focus();
-        outputCode.select();
-        statusBar.textContent = "Copia automatica non disponibile: seleziona il testo e copialo manualmente.";
+      output.focus(); output.select();
+      setStatus("Copia automatica non disponibile: il testo è selezionato, usa Copia dal dispositivo.");
     }
-});
-
-downloadBtn?.addEventListener("click", () => {
-    if (!outputCode.value.trim()) {
-        statusBar.textContent = "Non c'è alcun risultato da scaricare.";
-        return;
-    }
-    const blob = new Blob([outputCode.value], { type: "text/plain;charset=utf-8" });
+  });
+  $("downloadBtn").addEventListener("click", () => {
+    if (!output.value.trim()) { setStatus("Non c'è alcun risultato da scaricare."); return; }
+    const ext = window.CodeTranslator.extensions[target.value] || "txt";
+    const blob = new Blob([output.value], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
-    link.href = url;
-    link.download = "converted-code.txt";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
-    statusBar.textContent = "File di testo generato.";
-});
+    link.href = url; link.download = "translated-code." + ext;
+    document.body.appendChild(link); link.click(); link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+    setStatus("File translated-code." + ext + " pronto.", lastResult?.warnings || []);
+  });
+  input.addEventListener("input", updateCounts);
+  source.addEventListener("change", updateCounts);
+  target.addEventListener("change", updateCounts);
+  input.addEventListener("keydown", event => {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") translate();
+  });
+  updateCounts();
+})();
