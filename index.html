@@ -1,58 +1,64 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Offline Code Translator</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#090d18">
+  <meta name="description" content="Convertitore di codice offline con rilevamento linguaggio e diagnostica trasparente.">
+  <title>Code Translator — Offline</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
-        <h1>Offline Code Translator</h1>
-
-        <div class="selectors">
-            <div>
-                <label for="sourceLang">Origin language:</label>
-                <select id="sourceLang">
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="c">C/C++</option>
-                    <option value="java">Java</option>
-                    <option value="go">Go</option>
-                    <option value="sql">SQL</option>
-                </select>
-            </div>
-            <div>
-                <label for="targetLang">Destination language:</label>
-                <select id="targetLang">
-                    <option value="python">Python</option>
-                    <option value="javascript">JavaScript</option>
-                    <option value="c">C/C++</option>
-                    <option value="java">Java</option>
-                    <option value="go">Go</option>
-                    <option value="sql">SQL</option>
-                </select>
-            </div>
-            <div class="translate-wrapper">
-                <label style="visibility:hidden;">Traduci</label>
-                <button id="translateBtn">Translate</button>
-                <button id="swapBtn" type="button">Swap languages</button>
-            </div>
-        </div>
-
-        <div class="editor-container">
-            <textarea id="inputCode" placeholder="Scrivi il codice qui..."></textarea>
-            <textarea id="outputCode" placeholder="Codice tradotto apparirà qui..." readonly></textarea>
-        </div>
-
-        <div class="output-actions"><button id="copyBtn" type="button">Copy result</button><button id="downloadBtn" type="button">Download .txt</button></div>
-        <p class="notice">Experimental rule-based converter: it handles only supported patterns and does not preserve every language feature. Review and test generated code before using it.</p>
-        <div id="statusBar" role="status" aria-live="polite"></div>
-    </div>
-
-    <script src="script.js"></script>
+  <main class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="#" aria-label="Code Translator home"><span class="brand-mark">{"</span><span>CODE<span class="brand-accent">/</span>TRANSLATOR</span></a>
+      <span class="offline-pill"><i></i> OFFLINE READY</span>
+    </header>
+    <section class="hero">
+      <div class="eyebrow">DEVELOPER TOOLKIT · LOCAL FIRST</div>
+      <h1>Translate code.<br><span>Keep control.</span></h1>
+      <p>Converti costrutti riconosciuti direttamente nel browser. Nessun upload, nessun account. Le parti non supportate vengono segnalate, non inventate.</p>
+    </section>
+    <section class="workspace" aria-label="Code translation workspace">
+      <div class="toolbar">
+        <label class="language-field"><span>SOURCE LANGUAGE</span>
+          <select id="sourceLang">
+            <option value="auto">Rileva automaticamente</option>
+            <option value="python">Python</option><option value="javascript">JavaScript</option>
+            <option value="c">C</option><option value="java">Java</option><option value="go">Go</option><option value="sql">SQL</option>
+          </select>
+        </label>
+        <button id="swapBtn" class="icon-button" type="button" aria-label="Inverti linguaggi" title="Inverti linguaggi">⇄</button>
+        <label class="language-field"><span>TARGET LANGUAGE</span>
+          <select id="targetLang">
+            <option value="javascript">JavaScript</option><option value="python">Python</option>
+            <option value="c">C</option><option value="java">Java</option><option value="go">Go</option><option value="sql">SQL</option>
+          </select>
+        </label>
+        <button id="translateBtn" class="primary-button" type="button">Translate <span>↗</span></button>
+      </div>
+      <div class="editor-grid">
+        <section class="editor-panel">
+          <div class="panel-heading"><div><span class="panel-dot input-dot"></span><strong>INPUT</strong><small id="inputLanguageLabel">AUTO DETECT</small></div><button id="clearBtn" class="text-button" type="button">Clear</button></div>
+          <textarea id="inputCode" spellcheck="false" autocapitalize="off" autocomplete="off" aria-label="Codice sorgente" placeholder="Incolla qui il tuo codice…"></textarea>
+          <div class="editor-footer"><span id="inputCount">0 characters</span><button id="sampleBtn" class="text-button" type="button">Load example</button></div>
+        </section>
+        <section class="editor-panel">
+          <div class="panel-heading"><div><span class="panel-dot output-dot"></span><strong>OUTPUT</strong><small id="outputLanguageLabel">JAVASCRIPT</small></div><div class="output-tools"><button id="copyBtn" class="text-button" type="button">Copy</button><button id="downloadBtn" class="text-button" type="button">Download</button></div></div>
+          <textarea id="outputCode" spellcheck="false" aria-label="Codice convertito" placeholder="Il risultato apparirà qui…" readonly></textarea>
+          <div class="editor-footer"><span id="outputCount">0 characters</span><span id="resultState">WAITING FOR INPUT</span></div>
+        </section>
+      </div>
+      <section id="diagnostics" class="diagnostics" aria-live="polite">
+        <div class="diagnostics-title"><span>◈</span> TRANSLATION REPORT</div>
+        <p id="statusBar">Pronto. Inserisci codice e premi Translate.</p>
+        <ul id="warningList"></ul>
+      </section>
+      <div class="workspace-bottom"><span>LOCAL PROCESSING · YOUR CODE STAYS ON THIS DEVICE</span><span>EXPERIMENTAL TRANSLATOR <b>v2.0</b></span></div>
+    </section>
+    <footer><span>Built for learning and prototyping.</span><span>Always review and test generated code before production use.</span></footer>
+  </main>
+  <script src="translator-engine.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
-
-    
