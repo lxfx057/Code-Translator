@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;500;600;700;800&display=swap');
+500&family=Manrope:wght@400;500;600;700;800&display=swap');
 :root{color-scheme:dark;--bg:#090d18;--panel:#111827;--panel-2:#0d1422;--line:#253149;--muted:#8b98ad;--text:#edf3ff;--cyan:#69e0d0;--violet:#a99bff;--mono:'DM Mono',ui-monospace,SFMono-Regular,Consolas,monospace;--sans:Manrope,system-ui,sans-serif}
 *{box-sizing:border-box}
 body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#1b3150 0,transparent 48%),var(--bg);color:var(--text);font-family:var(--sans);padding:28px 20px 40px}
