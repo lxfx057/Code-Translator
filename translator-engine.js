@@ -1,5 +1,6 @@
 (function (root) {
   "use strict";
+  const AST = root.CodeTranslatorAST || (typeof require === "function" ? require("./ast-translator.js") : null);
 
   const LANGUAGES = ["python", "javascript", "c", "java", "go", "sql"];
   const EXTENSIONS = { python: "py", javascript: "js", c: "c", java: "java", go: "go", sql: "sql" };
@@ -237,6 +238,10 @@
     if (source === target) return { code, warnings: ["Sorgente e destinazione coincidono: il codice è stato lasciato invariato."], errors, confidence: 1 };
     if (source === "sql" || target === "sql") {
       return { code, warnings: ["SQL è un linguaggio di interrogazione dati, non un equivalente diretto di Python, JavaScript, C, Java o Go. La traduzione semantica tra SQL e questi linguaggi non viene simulata."], errors, confidence: 0 };
+    }
+    if (AST && ((source === "python" && target === "javascript") || (source === "javascript" && target === "python"))) {
+      const parsed = AST.translate(code, source, target);
+      return { code: parsed.code, warnings: parsed.warnings, errors, confidence: parsed.confidence, source, parser: parsed.parser };
     }
     const result = translateSimple(code, source, target, warnings);
     if (!warnings.length) warnings.push("Conversione dei costrutti riconosciuti completata. Verifica e testa sempre il risultato.");
