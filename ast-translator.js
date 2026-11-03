@@ -64,6 +64,7 @@
     for (let i = 0; i < lines.length; i++) {
       const text = lines[i].trim();
       if (!text) continue;
+      if (text.includes("=>")) throw new Error("Le funzioni arrow JavaScript non sono ancora supportate alla riga " + (i + 1));
       let m, parent = stack[stack.length - 1].body;
       if (/^}\s*;?$/.test(text)) {
         if (stack.length === 1) throw new Error("Graffa di chiusura inattesa alla riga " + (i + 1));
