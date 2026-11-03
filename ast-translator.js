@@ -109,6 +109,7 @@
       else if (n.type === "print") out.push(pad + (target === "python" ? "print(" + expression(n.value, target) + ")" : "console.log(" + expression(n.value, target) + ");"));
       else if (n.type === "assign") out.push(pad + (target === "python" ? n.name + " = " + expression(n.value, target) : "let " + n.name + " = " + expression(n.value, target) + ";"));
       else if (n.type === "return") out.push(pad + "return" + (n.value ? " " + expression(n.value, target) : "") + (target === "python" ? "" : ";"));
+      else if (n.type === "expr") out.push(pad + expression(n.value, target) + (target === "python" ? "" : ";"));
       else if (n.type === "pass") out.push(pad + (target === "python" ? "pass" : ";"));
       else if (n.type === "if") {
         out.push(pad + (target === "python" ? "if " + expression(n.test, target) + ":" : "if (" + expression(n.test, target) + ") {"));
