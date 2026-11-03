@@ -44,6 +44,7 @@
       else if ((m = text.match(/^print\s*\((.*)\)\s*$/))) node = { type: "print", value: m[1] };
       else if ((m = text.match(/^return(?:\s+(.+))?$/))) node = { type: "return", value: m[1] || "" };
       else if ((m = text.match(/^([A-Za-z_]\w*)\s*=\s*(.+)$/))) node = { type: "assign", name: m[1], value: m[2] };
+      else if (/^[A-Za-z_]\\w*\\s*\\(.*\\)$/.test(text)) node = { type: "expr", value: text };
       else if (text === "pass") node = { type: "pass" };
       else throw new Error("Costrutto Python non supportato alla riga " + (i + 1) + ": " + text);
       if (node.type === "alternate-container") {
@@ -92,6 +93,7 @@
       else if ((m = text.match(/^return(?:\s+(.+?))?;?$/))) node = { type: "return", value: (m[1] || "").replace(/;\s*$/, "") };
       else if ((m = text.match(/^(?:let|const|var)\s+([A-Za-z_]\w*)\s*=\s*(.+?);?$/))) node = { type: "assign", name: m[1], value: m[2].replace(/;\s*$/, "") };
       else if ((m = text.match(/^([A-Za-z_]\w*)\s*=\s*(.+?);?$/))) node = { type: "assign", name: m[1], value: m[2].replace(/;\s*$/, "") };
+      else if (/^[A-Za-z_]\\w*\\s*\\(.*\\)\\s*;?$/.test(text)) node = { type: "expr", value: text.replace(/;\\s*$/, "") };
       else if (text === ";") node = { type: "pass" };
       else throw new Error("Costrutto JavaScript non supportato alla riga " + (i + 1) + ": " + text);
       parent.push(node);
