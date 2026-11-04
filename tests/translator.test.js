@@ -50,5 +50,5 @@ test("AST parser refuses unsupported syntax instead of returning a misleading pa
   const result = engine.translate('const fn = (x) => x + 1;', "javascript", "python");
   assert.equal(result.code, "");
   assert.equal(result.confidence, 0);
-  assert.match(result.warnings.join(" "), /non supportato/);
+  assert.match(result.warnings.join(" "), /non sono ancora supportate/);
 });
